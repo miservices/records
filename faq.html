@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ | Michigan Records Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+            color: #1f2937;
+        }
+
+        header {
+            background-color: #0e1c32;
+            color: #ffffff;
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .faq-container {
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            padding: 18px 20px;
+            cursor: pointer;
+            background-color: #ffffff;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background-color: #f1f5f9;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 0 20px 20px 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .arrow {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        a {
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Frequently Asked Questions</h1>
+    <p>Michigan Records & Information Services</p>
+</header>
+
+<main>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search FAQs..." onkeyup="filterFAQs()">
+    </div>
+
+    <div class="faq-container" id="faqList">
+
+        <div class="faq-item">
+            <div class="faq-question">
+                What is the Michigan Records Portal?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                The Michigan Records Portal is a centralized system used to access public and
+                government records maintained by state and local agencies within Michigan that
+                are not otherwise accessible through in-game systems.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                What types of records are available?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Available records may include county and state employment records, court records,
+                arrest and booking records, warrants, citations, licensing data, and other public
+                government records that are not sealed or restricted.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Why don’t I see the records I am looking for?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                The record you are searching for may not exist, may be sealed or restricted,
+                or may only be released upon request. In such cases, you should contact the
+                department responsible for the record to submit a Freedom of Information Act
+                (FOIA) request. For more information on FOIA, please
+                <a href="https://google.com" target="_blank">click here</a>.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Who is authorized to access records?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Unless sealed or otherwise protected under Michigan law, government records
+                are available to the public through in-game systems, this records portal,
+                or by submitting a FOIA request.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Does Michigan keep records on people?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Under state law, Michigan maintains employment records for individuals employed
+                by the state or a county. These records contain limited information, which may
+                include a Roblox ID (used in place of an SSN), Roblox username, roleplay name,
+                employer, start and end dates of employment, reason for separation, and any
+                relevant employer notes.
+            </div>
+        </div>
+
+        <!-- Additional FAQs -->
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Are sealed or expunged records visible on this portal?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                No. Records that are sealed, expunged, or otherwise restricted by court order
+                or statute are not accessible through this portal.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                How often is this portal updated?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Records are updated as they are received from state and local agencies. Some
+                records may experience delays due to processing or verification requirements.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Can I request corrections to a record?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Requests for corrections must be directed to the agency responsible for the
+                original record. The Michigan Records Portal does not independently modify
+                record data.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                Is misuse of records allowed?
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                No. Unauthorized use, disclosure, or misuse of record information may result
+                in administrative action or penalties under applicable roleplay laws and
+                server rules.
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    © State of Michigan — Records & Information Services<br>
+    This website is not affiliated with, endorsed by, or representative of the
+    real State of Michigan or any real government agency.
+</footer>
+
+<script>
+    document.querySelectorAll('.faq-question').forEach(item => {
+        item.addEventListener('click', () => {
+            item.parentElement.classList.toggle('active');
+        });
+    });
+
+    function filterFAQs() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const items = document.querySelectorAll('.faq-item');
+
+        items.forEach(item => {
+            const text = item.innerText.toLowerCase();
+            item.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>

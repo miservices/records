@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Records | Michigan Records Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+            color: #1f2937;
+        }
+
+        header {
+            background-color: #0e1c32;
+            color: white;
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .info-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid #0e1c32;
+            padding: 14px;
+            font-size: 14px;
+            color: #374151;
+            display: none;
+            margin-top: 12px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 14px;
+            width: 100%;
+            background-color: #0e1c32;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover:enabled {
+            background-color: #142a52;
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>View Public Records</h1>
+    <p>Select how you would like to search for records</p>
+</header>
+
+<main>
+    <div class="card">
+
+        <!-- Record Type -->
+        <div class="section">
+            <label for="recordType">Search type</label>
+            <select id="recordType" onchange="handleRecordType()">
+                <option value="">-- Select an option --</option>
+                <option value="employment">Search Employment Records</option>
+                <option value="jurisdiction">Search by Jurisdiction</option>
+                <option value="background">Background Check</option>
+            </select>
+        </div>
+
+        <!-- Employment Info -->
+        <div class="section info-box" id="employmentInfo">
+            Employment record searches will be conducted across all counties
+            and the entire State of Michigan. You do not need to select a
+            jurisdiction to continue.
+        </div>
+
+        <!-- Background Check Info -->
+        <div class="section info-box" id="backgroundInfo">
+            Background checks are restricted to authorized state officers only
+            under Michigan law. You are not authorized to continue with this
+            search.
+        </div>
+
+        <!-- Jurisdiction -->
+        <div class="section" id="jurisdictionSection" style="display:none;">
+            <label for="jurisdiction">Select a jurisdiction</label>
+            <select id="jurisdiction" onchange="updateOffices()">
+                <option value="">-- Select a jurisdiction --</option>
+                <option value="city-of-flint">City of Flint</option>
+                <option value="genesee-county">Genesee County</option>
+                <option value="state-of-michigan">State of Michigan</option>
+            </select>
+        </div>
+
+        <!-- Office -->
+        <div class="section" id="officeSection" style="display:none;">
+            <label for="office">Select an office</label>
+            <select id="office">
+                <option value="">-- Select an office --</option>
+            </select>
+        </div>
+
+        <button id="continueBtn" onclick="continueSearch()">Continue</button>
+
+    </div>
+</main>
+
+<footer>
+    © State of Michigan — Records & Information Services<br>
+    This website is not affiliated with, endorsed by, or representative of the
+    real State of Michigan or any real government agency.
+</footer>
+
+<script>
+    const employmentInfo = document.getElementById('employmentInfo');
+    const backgroundInfo = document.getElementById('backgroundInfo');
+    const jurisdictionSection = document.getElementById('jurisdictionSection');
+    const officeSection = document.getElementById('officeSection');
+    const continueBtn = document.getElementById('continueBtn');
+
+    function handleRecordType() {
+        const type = document.getElementById('recordType').value;
+
+        employmentInfo.style.display = 'none';
+        backgroundInfo.style.display = 'none';
+        jurisdictionSection.style.display = 'none';
+        officeSection.style.display = 'none';
+        continueBtn.disabled = false;
+
+        if (type === 'employment') {
+            employmentInfo.style.display = 'block';
+        }
+
+        if (type === 'jurisdiction') {
+            jurisdictionSection.style.display = 'block';
+        }
+
+        if (type === 'background') {
+            backgroundInfo.style.display = 'block';
+            continueBtn.disabled = true; // cannot continue
+        }
+    }
+
+    function updateOffices() {
+        const jurisdiction = document.getElementById('jurisdiction').value;
+        const officeSelect = document.getElementById('office');
+
+        officeSelect.innerHTML = '<option value="">-- Select an office --</option>';
+        officeSection.style.display = 'none';
+
+        let offices = [];
+
+        if (jurisdiction === 'genesee-county') {
+            offices = [
+                ['sheriffs-office', "Sheriff's Office"],
+                ['prosecuting-attorneys-office', "Prosecuting Attorney's Office"],
+                ['other', 'Other']
+            ];
+        }
+
+        if (jurisdiction === 'state-of-michigan') {
+            offices = [
+                ['governors-office', "Governor's Office"],
+                ['state-police', 'State Police'],
+                ['secretary-of-state', 'Secretary of State'],
+                ['national-guard', 'National Guard'],
+                ['attorney-general', 'Attorney General'],
+                ['legislature', 'Legislature'],
+                ['state-courts', 'State Courts'],
+                ['other', 'Other']
+            ];
+        }
+
+        if (jurisdiction === 'city-of-flint') {
+            return;
+        }
+
+        offices.forEach(o => {
+            const option = document.createElement('option');
+            option.value = o[0];
+            option.textContent = o[1];
+            officeSelect.appendChild(option);
+        });
+
+        officeSection.style.display = 'block';
+    }
+
+    function continueSearch() {
+        const type = document.getElementById('recordType').value;
+
+        if (!type) {
+            alert('Please select a search type.');
+            return;
+        }
+
+        if (type === 'employment') {
+            window.location.href =
+                'https://miservices.github.io/records/view/employment-records';
+            return;
+        }
+
+        if (type === 'background') {
+            alert('You are not authorized to perform a background check.');
+            return;
+        }
+
+        const jurisdiction = document.getElementById('jurisdiction').value;
+        const office = document.getElementById('office').value;
+
+        if (!jurisdiction) {
+            alert('Please select a jurisdiction.');
+            return;
+        }
+
+        if (jurisdiction === 'city-of-flint') {
+            window.location.href =
+                'https://miservices.github.io/records/view/city-of-flint';
+            return;
+        }
+
+        if (!office) {
+            alert('Please select an office.');
+            return;
+        }
+
+        window.location.href =
+            `https://miservices.github.io/records/view/${jurisdiction}/${office}`;
+    }
+</script>
+
+</body>
+</html>
