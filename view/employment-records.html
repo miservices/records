@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Employment Records | Michigan Records Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    color: #1f2937;
+}
+
+header {
+    background-color: #0e1c32;
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+}
+
+main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+h2 { color: #0e1c32; margin-top: 0; }
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 14px;
+    width: 100%;
+    background-color: #0e1c32;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #94a3b8;
+}
+
+.terms-box {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 20px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.results-container {
+    margin-top: 20px;
+}
+
+.result-card {
+    border: 1px solid #e5e7eb;
+    padding: 18px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    background: #ffffff;
+}
+
+.result-card:hover {
+    background-color: #f8fafc;
+}
+
+.result-header {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.result-sub {
+    font-size: 14px;
+    color: #475569;
+}
+
+.details {
+    margin-top: 15px;
+    font-size: 14px;
+    display: none;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 15px;
+}
+
+footer {
+    margin-top: 60px;
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Statewide Employment Records</h1>
+    <p>Michigan Vital Identity and Records Act Disclosure</p>
+</header>
+
+<main>
+
+<!-- TERMS -->
+<div class="card" id="termsCard">
+<h2>Terms and Conditions</h2>
+
+<div class="terms-box">
+<p>Under the <strong>Michigan Vital Identity and Records Act</strong>, employment records may be collected, maintained, and disclosed as public record when permitted by law.</p>
+<p>State and county employers are legally required to report employment information. Other employers may report voluntarily.</p>
+<p>Prohibited uses include harassment, fraud, impersonation, or unlawful activity.</p>
+</div>
+
+<input type="checkbox" id="acceptTerms" onchange="toggleAccess()"> I agree to the terms
+<br><br>
+<button id="acceptBtn" disabled onclick="showSearch()">Continue</button>
+</div>
+
+<!-- SEARCH -->
+<div class="card" id="searchCard" style="display:none;">
+<h2>Search Employment Records</h2>
+
+<input id="nameInput" placeholder="First or Last Name">
+<input id="dobInput" type="date">
+<input id="ssnInput" placeholder="SSN">
+<input id="userInput" placeholder="Roblox Username">
+
+<button onclick="searchRecords()">Search Records</button>
+
+<div class="results-container" id="results"></div>
+</div>
+
+</main>
+
+<footer>
+<strong>IMPORTANT NOTICE</strong><br>
+This website is not affiliated with the real State of Michigan.
+</footer>
+
+<script>
+const CSV_URL =
+'https://docs.google.com/spreadsheets/d/e/2PACX-1vRCqDgj7khhQdEEyCKfnuNy67kX4XIZJYvWqJVEVZ-zG2izG5JyBAXg1H2xqeSfN2oEMzptcRJkhdHX/pub?output=csv';
+
+let records = [];
+
+function toggleAccess() {
+    document.getElementById('acceptBtn').disabled =
+        !document.getElementById('acceptTerms').checked;
+}
+
+function showSearch() {
+    document.getElementById('termsCard').style.display = 'none';
+    document.getElementById('searchCard').style.display = 'block';
+}
+
+async function loadCSV() {
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    const rows = text.split('\n').slice(1);
+
+    records = rows.map(r => {
+        const c = r.split(',');
+        return {
+            ssn: c[0],
+            username: c[1],
+            first: c[2],
+            last: c[3],
+            dob: c[4],
+            employer: c[5],
+            start: c[6],
+            end: c[7],
+            reason: c[8],
+            notes: c[9]
+        };
+    });
+}
+
+function searchRecords() {
+    const name = nameInput.value.toLowerCase();
+    const dob = dobInput.value;
+    const ssn = ssnInput.value;
+    const user = userInput.value.toLowerCase();
+
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+
+    const matches = records.filter(r =>
+        (!name || `${r.first} ${r.last}`.toLowerCase().includes(name)) &&
+        (!dob || r.dob === dob) &&
+        (!ssn || r.ssn.includes(ssn)) &&
+        (!user || r.username.toLowerCase().includes(user))
+    );
+
+    if (!matches.length) {
+        resultsDiv.innerHTML = '<p>No results found.</p>';
+        return;
+    }
+
+    matches.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+
+        const status = r.end ? 'Separated' : 'Active';
+
+        card.innerHTML = `
+            <div class="result-header">${r.first} ${r.last}</div>
+            <div class="result-sub">${r.username} • ${r.employer} • ${status}</div>
+            <div class="details">
+                <p><strong>SSN:</strong> ${r.ssn}</p>
+                <p><strong>DOB:</strong> ${r.dob}</p>
+                <p><strong>Employer:</strong> ${r.employer}</p>
+                <p><strong>Start Date:</strong> ${r.start}</p>
+                <p><strong>End Date:</strong> ${r.end || 'Present'}</p>
+                <p><strong>Reason:</strong> ${r.reason}</p>
+                <p><strong>Notes:</strong> ${r.notes}</p>
+            </div>
+        `;
+
+        card.onclick = () => {
+            const d = card.querySelector('.details');
+            d.style.display = d.style.display === 'block' ? 'none' : 'block';
+        };
+
+        resultsDiv.appendChild(card);
+    });
+}
+
+loadCSV();
+</script>
+
+</body>
+</html>
