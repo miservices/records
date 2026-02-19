@@ -250,7 +250,7 @@ window.goToRegister = goToRegister;
 onAuthStateChanged(auth, user => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        showDashboard(firstName, lastName, user.email);
+        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     }
 });
 
