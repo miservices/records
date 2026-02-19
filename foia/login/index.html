@@ -114,6 +114,10 @@
         color: #666;
     }
 
+    .hidden {
+        display: none;
+    }
+
     .dashboard p {
         text-align: center;
         margin-bottom: 20px;
@@ -144,7 +148,7 @@
         </form>
         <div style="margin-top: 10px;">
             <button class="btn btn-secondary" onclick="goToRegister()">Back to Register</button>
-            <button class="btn btn-secondary" onclick="resetPassword()" style="margin-top: 10px;">Forgot Password?</button>
+            <button class="btn btn-secondary" onclick="forgotPassword()" style="margin-top: 10px;">Forgot Password?</button>
         </div>
     </div>
 
@@ -163,7 +167,13 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut, 
+    sendPasswordResetEmail 
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -180,55 +190,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Login
-document.getElementById("loginForm").addEventListener("submit", function(e){
+// Login handler with error handling
+document.getElementById("loginForm").addEventListener("submit", async function(e){
     e.preventDefault();
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
-    signInWithEmailAndPassword(auth, email, password)
-    .then(userCredential => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, email);
-    })
-    .catch(error => alert(error.message));
+        showDashboard(firstName, lastName, email);
+    } catch(error) {
+        alert("Login error: " + error.message);
+    }
 });
 
-// Password reset
-function resetPassword() {
-    const email = prompt("Enter your email to reset password:");
+// Forgot password handler
+function forgotPassword() {
+    const email = prompt("Enter your email to reset your password:");
     if(email) {
         sendPasswordResetEmail(auth, email)
         .then(() => alert("Password reset email sent. Check your inbox."))
-        .catch(error => alert(error.message));
+        .catch(error => alert("Error sending reset email: " + error.message));
     }
 }
 
-// Redirect to registration (update URL to your registration page)
+// Back to register
 function goToRegister() {
-    window.location.href = 'https://miservices.github.io/records/foia/register';
+    window.location.href = "https://miservices.github.io/records/foia/register/";
 }
 
-// Auto-login / keep user logged in
+// Auto-login
 onAuthStateChanged(auth, user => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, user.email);
+        showDashboard(firstName, lastName, user.email);
     }
 });
 
 // Logout
-function logout(){
-    signOut(auth).then(() => location.reload());
+function logout() {
+    signOut(auth).then(() => {
+        document.getElementById("dashboardSection").classList.add("hidden");
+        document.getElementById("loginSection").classList.remove("hidden");
+    });
 }
 window.logout = logout;
 
-// Dashboard
-function loadDashboard(firstName, lastName, email){
+// Show dashboard
+function showDashboard(firstName, lastName, email) {
     document.getElementById("loginSection").classList.add("hidden");
     document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeMessage").innerText =
+    document.getElementById("welcomeMessage").innerText = 
         "Logged in as " + firstName + " " + lastName + " (" + email + ")";
 }
 </script>
