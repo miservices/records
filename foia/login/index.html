@@ -1,1 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Michigan FOIA Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #f4f6f8;
+        color: #1a1a1a;
+    }
 
+    header {
+        background-color: #0e1c32;
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 32px;
+    }
+
+    header p {
+        margin-top: 10px;
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    main {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+
+    .card h2 {
+        margin-bottom: 20px;
+        color: #0e1c32;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    .form-group input:focus {
+        border-color: #1d6fa5;
+        outline: none;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+        padding: 14px 22px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        width: 100%;
+        margin-top: 10px;
+        border: none;
+        font-size: 16px;
+    }
+
+    .btn-primary {
+        background-color: #0e1c32;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #142a52;
+    }
+
+    .btn-secondary {
+        background-color: #e1e5eb;
+        color: #0e1c32;
+    }
+
+    .btn-secondary:hover {
+        background-color: #cfd6e0;
+    }
+
+    footer {
+        margin-top: 60px;
+        padding: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .dashboard p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Michigan FOIA Portal</h1>
+    <p>Official Access to Public Records</p>
+</header>
+
+<main>
+    <!-- Registration Form -->
+    <div id="registerSection" class="card">
+        <h2>Create Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="firstName">First Name*</label>
+                <input type="text" id="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name*</label>
+                <input type="text" id="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password*</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+<button class="btn btn-secondary" onclick="window.location.href='https://miservices.github.io/records/foia/login'">
+  Already have an account? Log in
+</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginSection" class="card hidden">
+        <h2>Log In</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email*</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password*</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Log In</button>
+        </form>
+        <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardSection" class="card hidden dashboard">
+        <h2>Welcome to the FOIA Portal</h2>
+        <p id="welcomeMessage"></p>
+        <button class="btn btn-primary" onclick="logout()">Log Out</button>
+    </div>
+</main>
+
+<footer>
+   <strong>IMPORTANT NOTICE</strong><br>
+   This website is not affiliated with, endorsed by, or representative of the real State of Michigan or any real government agency.
+</footer>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut, 
+    sendPasswordResetEmail, 
+    updateProfile 
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAxN56Z0ND8YleCANSSlIm7z-KDaPXBz6I",
+  authDomain: "michigan-foia-portal.firebaseapp.com",
+  projectId: "michigan-foia-portal",
+  storageBucket: "michigan-foia-portal.firebasestorage.app",
+  messagingSenderId: "735821498282",
+  appId: "1:735821498282:web:60060d3fc8e0a5a9f70dd3",
+  measurementId: "G-ZRJ85D5X5C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Show/Hide sections
+function showLogin() {
+    document.getElementById("registerSection").classList.add("hidden");
+    document.getElementById("loginSection").classList.remove("hidden");
+}
+
+function showRegister() {
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("registerSection").classList.remove("hidden");
+}
+
+window.showRegister = showRegister;
+window.showLogin = showLogin;
+
+// Registration
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await updateProfile(user, { displayName: firstName + " " + lastName });
+        loadDashboard(firstName, lastName, email);
+    } catch (error) {
+        alert(error.message);
+    }
+});
+
+// Login
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
+        loadDashboard(firstName, lastName, email);
+    } catch (error) {
+        alert(error.message);
+    }
+});
+
+// Password reset
+function resetPassword() {
+    const email = prompt("Enter your email to reset your password:");
+    if (!email) return;
+
+    sendPasswordResetEmail(auth, email)
+    .then(() => alert("Password reset email sent! Check your inbox."))
+    .catch(err => alert(err.message));
+}
+window.resetPassword = resetPassword;
+
+// Auto-login
+onAuthStateChanged(auth, (user) => {
+    if(user){
+        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
+        loadDashboard(firstName, lastName, user.email);
+    }
+});
+
+// Logout
+function logout(){
+    signOut(auth).then(() => location.reload());
+}
+window.logout = logout;
+
+// Dashboard
+function loadDashboard(firstName, lastName, email){
+    document.getElementById("registerSection").classList.add("hidden");
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("dashboardSection").classList.remove("hidden");
+    document.getElementById("welcomeMessage").innerText =
+        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
+}
+</script>
+
+
+</body>
+</html>
