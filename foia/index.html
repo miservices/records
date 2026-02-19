@@ -187,8 +187,26 @@
    This website is not affiliated with, endorsed by, or representative of the real State of Michigan or any real government agency.
 </footer>
 
-<script>
-// Show/Hide Sections
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAxN56Z0ND8YleCANSSlIm7z-KDaPXBz6I",
+  authDomain: "michigan-foia-portal.firebaseapp.com",
+  projectId: "michigan-foia-portal",
+  storageBucket: "michigan-foia-portal.firebasestorage.app",
+  messagingSenderId: "735821498282",
+  appId: "1:735821498282:web:60060d3fc8e0a5a9f70dd3",
+  measurementId: "G-ZRJ85D5X5C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Show/Hide sections
 function showLogin(){
     document.getElementById("registerSection").classList.add("hidden");
     document.getElementById("loginSection").classList.remove("hidden");
@@ -202,59 +220,59 @@ function showRegister(){
 // Registration
 document.getElementById("registerForm").addEventListener("submit", function(e){
     e.preventDefault();
+    const firstName = document.getElementById("firstName").value;
+    const lastName = document.getElementById("lastName").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const user = {
-        firstName: document.getElementById("firstName").value,
-        lastName: document.getElementById("lastName").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
-    };
-
-    localStorage.setItem("foiaUser", JSON.stringify(user));
-    localStorage.setItem("loggedIn", "true");
-
-    loadDashboard();
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        const user = userCredential.user;
+        updateProfile(user, { displayName: firstName + " " + lastName });
+        loadDashboard(firstName, lastName, email);
+    })
+    .catch((error) => alert(error.message));
 });
 
 // Login
 document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
-
-    const savedUser = JSON.parse(localStorage.getItem("foiaUser"));
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
 
-    if(savedUser && savedUser.email === email && savedUser.password === password){
-        localStorage.setItem("loggedIn", "true");
-        loadDashboard();
-    } else {
-        alert("Invalid email or password.");
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        const user = userCredential.user;
+        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
+        loadDashboard(firstName, lastName, email);
+    })
+    .catch((error) => alert(error.message));
+});
+
+// Auto-login / keep user logged in
+onAuthStateChanged(auth, (user) => {
+    if(user){
+        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
+        loadDashboard(firstName, lastName, user.email);
     }
 });
 
-// Dashboard Load
-function loadDashboard(){
-    const user = JSON.parse(localStorage.getItem("foiaUser"));
+// Logout
+function logout(){
+    signOut(auth).then(() => location.reload());
+}
+window.logout = logout; // make it accessible to your button
+
+// Dashboard
+function loadDashboard(firstName, lastName, email){
     document.getElementById("registerSection").classList.add("hidden");
     document.getElementById("loginSection").classList.add("hidden");
     document.getElementById("dashboardSection").classList.remove("hidden");
     document.getElementById("welcomeMessage").innerText =
-        "Logged in as " + user.firstName + " " + user.lastName + " (" + user.email + ")";
-}
-
-// Logout
-function logout(){
-    localStorage.setItem("loggedIn", "false");
-    location.reload();
-}
-
-// Auto-login
-window.onload = function(){
-    if(localStorage.getItem("loggedIn") === "true"){
-        loadDashboard();
-    }
+        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
 }
 </script>
+
 
 </body>
 </html>
