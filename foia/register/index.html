@@ -106,12 +106,6 @@
         background-color: #cfd6e0;
     }
 
-    .btn-small {
-    width: auto;           /* shrink to fit text */
-    display: inline-block; /* allow centering */
-    margin: 10px auto 0;   /* center horizontally with some spacing */
-}
-
     footer {
         margin-top: 60px;
         padding: 20px;
@@ -139,30 +133,31 @@
 
 <main>
     <!-- Registration Form -->
-   <!-- Registration Form -->
-<div id="registerSection" class="card">
-    <h2>Create Account</h2>
-    <form id="registerForm">
-        <div class="form-group">
-            <label for="firstName">First Name*</label>
-            <input type="text" id="firstName" required>
-        </div>
-        <div class="form-group">
-            <label for="lastName">Last Name*</label>
-            <input type="text" id="lastName" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email*</label>
-            <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password*</label>
-            <input type="password" id="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Create Account</button>
-    </form>
-   <a href="../login/" class="btn btn-secondary btn-small">Already have an account? Log in</a>
-</div>
+    <div id="registerSection" class="card">
+        <h2>Create Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="firstName">First Name*</label>
+                <input type="text" id="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name*</label>
+                <input type="text" id="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password*</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+<button class="btn btn-secondary" onclick="window.location.href='https://link.com/foia/login'">
+  Already have an account? Log in
+</button>
+    </div>
 
     <!-- Login Form -->
     <div id="loginSection" class="card hidden">
