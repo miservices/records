@@ -2,189 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>State of Michigan FOIA Portal</title>
+<title>Michigan FOIA Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-:root {
-    --primary:#0b3c5d;
-    --secondary:#1d6fa5;
-    --accent:#e0b400;
-    --background:#f4f6f8;
-    --card:#ffffff;
-    --text:#333;
-}
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #f4f6f8;
+        color: #1a1a1a;
+    }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    header {
+        background-color: #0e1c32;
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+    }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--background);
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+    header h1 {
+        margin: 0;
+        font-size: 32px;
+    }
 
-header {
-    background: var(--primary);
-    color: #fff;
-    padding: 30px 20px;
-    text-align: center;
-}
+    header p {
+        margin-top: 10px;
+        font-size: 16px;
+        opacity: 0.9;
+    }
 
-header h1 {
-    font-size: 28px;
-    margin-bottom: 5px;
-}
+    main {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
 
-header p {
-    font-size: 16px;
-}
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
 
-.container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 40px 20px;
-}
+    .card h2 {
+        margin-bottom: 20px;
+        color: #0e1c32;
+        text-align: center;
+    }
 
-.card {
-    background: var(--card);
-    padding: 40px 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 450px;
-}
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
 
-.card h2 {
-    color: var(--primary);
-    margin-bottom: 25px;
-    text-align: center;
-}
+    .form-group label {
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
 
-.form-group {
-    position: relative;
-    margin-bottom: 25px;
-}
+    .form-group input {
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
 
-input {
-    width: 100%;
-    padding: 14px 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #f9f9f9;
-    transition: all 0.2s;
-}
+    .form-group input:focus {
+        border-color: #1d6fa5;
+        outline: none;
+    }
 
-input:focus {
-    border-color: var(--secondary);
-    outline: none;
-    background: #fff;
-}
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+        padding: 14px 22px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        width: 100%;
+        margin-top: 10px;
+        border: none;
+        font-size: 16px;
+    }
 
-label {
-    position: absolute;
-    left: 12px;
-    top: 14px;
-    color: #777;
-    font-size: 14px;
-    pointer-events: none;
-    transition: all 0.2s;
-}
+    .btn-primary {
+        background-color: #0e1c32;
+        color: white;
+    }
 
-input:focus + label,
-input:not(:placeholder-shown) + label {
-    top: -10px;
-    left: 10px;
-    font-size: 12px;
-    color: var(--secondary);
-    background: var(--card);
-    padding: 0 4px;
-}
+    .btn-primary:hover {
+        background-color: #142a52;
+    }
 
-button {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
+    .btn-secondary {
+        background-color: #e1e5eb;
+        color: #0e1c32;
+    }
 
-.primary-btn {
-    background: var(--secondary);
-    color: #fff;
-}
+    .btn-secondary:hover {
+        background-color: #cfd6e0;
+    }
 
-.primary-btn:hover {
-    background: var(--primary);
-}
+    footer {
+        margin-top: 60px;
+        padding: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #666;
+    }
 
-.secondary-btn {
-    background: transparent;
-    color: var(--secondary);
-    margin-top: 10px;
-}
+    .hidden {
+        display: none;
+    }
 
-.secondary-btn:hover {
-    text-decoration: underline;
-}
-
-.dashboard {
-    text-align: center;
-}
-
-.logout-btn {
-    background: #b02a2a;
-    color: #fff;
-}
-
-.hidden {
-    display: none;
-}
+    .dashboard p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>State of Michigan</h1>
-    <p>Freedom of Information Act (FOIA) Portal</p>
+    <h1>Michigan FOIA Portal</h1>
+    <p>Official Access to Public Records</p>
 </header>
 
-<div class="container">
-
+<main>
     <!-- Registration Form -->
     <div id="registerSection" class="card">
         <h2>Create Account</h2>
         <form id="registerForm">
             <div class="form-group">
-                <input type="text" id="firstName" placeholder=" " required>
-                <label>First Name*</label>
+                <label for="firstName">First Name*</label>
+                <input type="text" id="firstName" required>
             </div>
             <div class="form-group">
-                <input type="text" id="lastName" placeholder=" " required>
-                <label>Last Name*</label>
+                <label for="lastName">Last Name*</label>
+                <input type="text" id="lastName" required>
             </div>
             <div class="form-group">
-                <input type="email" id="email" placeholder=" " required>
-                <label>Email*</label>
+                <label for="email">Email*</label>
+                <input type="email" id="email" required>
             </div>
             <div class="form-group">
-                <input type="password" id="password" placeholder=" " required>
-                <label>Password*</label>
+                <label for="password">Password*</label>
+                <input type="password" id="password" required>
             </div>
-            <button type="submit" class="primary-btn">Create Account</button>
+            <button type="submit" class="btn btn-primary">Create Account</button>
         </form>
-        <button class="secondary-btn" onclick="showLogin()">Already have an account? Log in</button>
+        <button class="btn btn-secondary" onclick="showLogin()">Already have an account? Log in</button>
     </div>
 
     <!-- Login Form -->
@@ -192,29 +162,33 @@ button {
         <h2>Log In</h2>
         <form id="loginForm">
             <div class="form-group">
-                <input type="email" id="loginEmail" placeholder=" " required>
-                <label>Email*</label>
+                <label for="loginEmail">Email*</label>
+                <input type="email" id="loginEmail" required>
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" placeholder=" " required>
-                <label>Password*</label>
+                <label for="loginPassword">Password*</label>
+                <input type="password" id="loginPassword" required>
             </div>
-            <button type="submit" class="primary-btn">Log In</button>
+            <button type="submit" class="btn btn-primary">Log In</button>
         </form>
-        <button class="secondary-btn" onclick="showRegister()">Need an account? Register</button>
+        <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
     </div>
 
     <!-- Dashboard -->
     <div id="dashboardSection" class="card hidden dashboard">
         <h2>Welcome to the FOIA Portal</h2>
         <p id="welcomeMessage"></p>
-        <button class="logout-btn primary-btn" onclick="logout()">Log Out</button>
+        <button class="btn btn-primary" onclick="logout()">Log Out</button>
     </div>
+</main>
 
-</div>
+<footer>
+   <strong>IMPORTANT NOTICE</strong><br>
+   This website is not affiliated with, endorsed by, or representative of the real State of Michigan or any real government agency.
+</footer>
 
 <script>
-// Section Toggle
+// Show/Hide Sections
 function showLogin(){
     document.getElementById("registerSection").classList.add("hidden");
     document.getElementById("loginSection").classList.remove("hidden");
