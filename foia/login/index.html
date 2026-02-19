@@ -154,9 +154,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Create Account</button>
         </form>
-<button class="btn btn-secondary" onclick="window.location.href='https://miservices.github.io/records/foia/login'">
-  Already have an account? Log in
-</button>
+        <button class="btn btn-secondary" onclick="showLogin()">Already have an account? Log in</button>
     </div>
 
     <!-- Login Form -->
@@ -173,7 +171,10 @@
             </div>
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
-        <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
+            <button class="btn btn-secondary" onclick="resetPassword()" style="margin-top: 10px;">Forgot Password?</button>
+        </div>
     </div>
 
     <!-- Dashboard -->
@@ -189,7 +190,6 @@
    This website is not affiliated with, endorsed by, or representative of the real State of Michigan or any real government agency.
 </footer>
 
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { 
@@ -198,8 +198,8 @@ import {
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
     signOut, 
-    sendPasswordResetEmail, 
-    updateProfile 
+    updateProfile, 
+    sendPasswordResetEmail 
 } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
 // Firebase config
@@ -228,55 +228,52 @@ function showRegister() {
     document.getElementById("registerSection").classList.remove("hidden");
 }
 
-window.showRegister = showRegister;
-window.showLogin = showLogin;
-
 // Registration
-document.getElementById("registerForm").addEventListener("submit", async function(e){
+document.getElementById("registerForm").addEventListener("submit", function(e){
     e.preventDefault();
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
         const user = userCredential.user;
-        await updateProfile(user, { displayName: firstName + " " + lastName });
-        loadDashboard(firstName, lastName, email);
-    } catch (error) {
-        alert(error.message);
-    }
+        updateProfile(user, { displayName: firstName + " " + lastName })
+        .then(() => {
+            alert("Account created successfully! Please log in.");
+            showLogin();
+        });
+    })
+    .catch((error) => alert(error.message));
 });
 
 // Login
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
         loadDashboard(firstName, lastName, email);
-    } catch (error) {
-        alert(error.message);
-    }
+    })
+    .catch((error) => alert(error.message));
 });
 
 // Password reset
 function resetPassword() {
-    const email = prompt("Enter your email to reset your password:");
-    if (!email) return;
-
-    sendPasswordResetEmail(auth, email)
-    .then(() => alert("Password reset email sent! Check your inbox."))
-    .catch(err => alert(err.message));
+    const email = prompt("Enter your email to reset password:");
+    if(email) {
+        sendPasswordResetEmail(auth, email)
+        .then(() => alert("Password reset email sent. Check your inbox."))
+        .catch((error) => alert(error.message));
+    }
 }
-window.resetPassword = resetPassword;
 
-// Auto-login
+// Auto-login / keep user logged in
 onAuthStateChanged(auth, (user) => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
@@ -299,7 +296,6 @@ function loadDashboard(firstName, lastName, email){
         "Logged in as " + firstName + " " + lastName + " (" + email + ")";
 }
 </script>
-
 
 </body>
 </html>
