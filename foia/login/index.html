@@ -211,7 +211,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
+        showDashboard(firstName, lastName, email);
     } catch(error) {
         handleLoginError(error);
     }
@@ -250,7 +250,7 @@ window.goToRegister = goToRegister;
 onAuthStateChanged(auth, user => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
+        showDashboard(firstName, lastName, user.email);
     }
 });
 
@@ -263,6 +263,13 @@ function logout() {
 }
 window.logout = logout;
 
+// Show dashboard
+function showDashboard(firstName, lastName, email) {
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("dashboardSection").classList.remove("hidden");
+    document.getElementById("welcomeMessage").innerText =
+        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
+}
 </script>
 
 </body>
