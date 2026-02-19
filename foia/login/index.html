@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Michigan FOIA Portal</title>
+<title>Michigan FOIA Portal – Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body {
@@ -114,10 +114,6 @@
         color: #666;
     }
 
-    .hidden {
-        display: none;
-    }
-
     .dashboard p {
         text-align: center;
         margin-bottom: 20px;
@@ -132,33 +128,8 @@
 </header>
 
 <main>
-    <!-- Registration Form -->
-    <div id="registerSection" class="card">
-        <h2>Create Account</h2>
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="firstName">First Name*</label>
-                <input type="text" id="firstName" required>
-            </div>
-            <div class="form-group">
-                <label for="lastName">Last Name*</label>
-                <input type="text" id="lastName" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email*</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password*</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create Account</button>
-        </form>
-        <button class="btn btn-secondary" onclick="showLogin()">Already have an account? Log in</button>
-    </div>
-
     <!-- Login Form -->
-    <div id="loginSection" class="card hidden">
+    <div id="loginSection" class="card">
         <h2>Log In</h2>
         <form id="loginForm">
             <div class="form-group">
@@ -172,7 +143,7 @@
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
         <div style="margin-top: 10px;">
-            <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
+            <button class="btn btn-secondary" onclick="goToRegister()">Back to Register</button>
             <button class="btn btn-secondary" onclick="resetPassword()" style="margin-top: 10px;">Forgot Password?</button>
         </div>
     </div>
@@ -192,15 +163,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut, 
-    updateProfile, 
-    sendPasswordResetEmail 
-} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -217,37 +180,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Show/Hide sections
-function showLogin() {
-    document.getElementById("registerSection").classList.add("hidden");
-    document.getElementById("loginSection").classList.remove("hidden");
-}
-
-function showRegister() {
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("registerSection").classList.remove("hidden");
-}
-
-// Registration
-document.getElementById("registerForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        const user = userCredential.user;
-        updateProfile(user, { displayName: firstName + " " + lastName })
-        .then(() => {
-            alert("Account created successfully! Please log in.");
-            showLogin();
-        });
-    })
-    .catch((error) => alert(error.message));
-});
-
 // Login
 document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
@@ -255,12 +187,12 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
     const password = document.getElementById("loginPassword").value;
 
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(userCredential => {
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
         loadDashboard(firstName, lastName, email);
     })
-    .catch((error) => alert(error.message));
+    .catch(error => alert(error.message));
 });
 
 // Password reset
@@ -269,12 +201,17 @@ function resetPassword() {
     if(email) {
         sendPasswordResetEmail(auth, email)
         .then(() => alert("Password reset email sent. Check your inbox."))
-        .catch((error) => alert(error.message));
+        .catch(error => alert(error.message));
     }
 }
 
+// Redirect to registration (update URL to your registration page)
+function goToRegister() {
+    window.location.href = 'https://miservices.github.io/records/foia/register';
+}
+
 // Auto-login / keep user logged in
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, user => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
         loadDashboard(firstName, lastName, user.email);
@@ -289,7 +226,6 @@ window.logout = logout;
 
 // Dashboard
 function loadDashboard(firstName, lastName, email){
-    document.getElementById("registerSection").classList.add("hidden");
     document.getElementById("loginSection").classList.add("hidden");
     document.getElementById("dashboardSection").classList.remove("hidden");
     document.getElementById("welcomeMessage").innerText =
