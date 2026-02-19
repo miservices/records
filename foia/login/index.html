@@ -226,9 +226,16 @@ async function forgotPassword() {
         await sendPasswordResetEmail(auth, email);
         alert("Password reset email sent. Check your inbox.");
     } catch(error) {
-        alert("Error sending reset email.");
+        if (error.code === "auth/user-not-found") {
+            alert("Error: account not found");
+        } else if (error.code === "auth/invalid-email") {
+            alert("Error: invalid email address");
+        } else {
+            alert("Error: " + error.message);
+        }
     }
 }
+
 
 // Back to register
 function goToRegister() {
