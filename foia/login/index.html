@@ -211,7 +211,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        showDashboard(firstName, lastName, email);
+        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     } catch(error) {
         handleLoginError(error);
     }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Michigan FOIA Portal – Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    color: #1a1a1a;
+}
+
+header {
+    background-color: #0e1c32;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+main {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 22px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    font-size: 16px;
+    background-color: #0e1c32;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #142a52;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Michigan FOIA Portal</h1>
+    <p>Dashboard</p>
+</header>
+
+<main>
+    <div class="card">
+        <h2>Welcome</h2>
+        <p id="welcomeMessage"></p>
+        <button class="btn" onclick="logout()">Log Out</button>
+    </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxN56Z0ND8YleCANSSlIm7z",
+  authDomain: "michigan-foia-portal.firebaseapp.com",
+  projectId: "michigan-foia-portal",
+  storageBucket: "michigan-foia-portal.firebasestorage.app",
+  messagingSenderId: "735821498282",
+  appId: "1:735821498282:web:60060d3fc8e0a5a9f70dd3",
+  measurementId: "G-ZRJ85D5X5C"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        // Not logged in → redirect to register
+        window.location.href = "https://miservices.github.io/records/foia/register/";
+    } else {
+        document.getElementById("welcomeMessage").innerText =
+            "Logged in as " + user.displayName + " (" + user.email + ")";
+    }
+});
+
+function logout() {
+    signOut(auth).then(() => {
+        window.location.href = "https://miservices.github.io/records/foia/register/";
+    });
+}
+
+window.logout = logout;
+</script>
+
+</body>
+</html>

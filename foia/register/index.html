@@ -231,7 +231,7 @@ document.getElementById("registerForm").addEventListener("submit", function(e){
     .then((userCredential) => {
         const user = userCredential.user;
         updateProfile(user, { displayName: firstName + " " + lastName });
-        loadDashboard(firstName, lastName, email);
+        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     })
     .catch((error) => alert(error.message));
 });
@@ -246,7 +246,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
     .then((userCredential) => {
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, email);
+        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     })
     .catch((error) => alert(error.message));
 });
