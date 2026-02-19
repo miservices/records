@@ -151,13 +151,6 @@
             <button class="btn btn-secondary" onclick="forgotPassword()" style="margin-top: 10px;">Forgot Password?</button>
         </div>
     </div>
-
-    <!-- Dashboard -->
-    <div id="dashboardSection" class="card hidden dashboard">
-        <h2>Welcome to the FOIA Portal</h2>
-        <p id="welcomeMessage"></p>
-        <button class="btn btn-primary" onclick="logout()">Log Out</button>
-    </div>
 </main>
 
 <footer>
@@ -211,7 +204,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        showDashboard(firstName, lastName, email);
+        window.location.href = "/records/foia/dashboard/";
     } catch(error) {
         handleLoginError(error);
     }
@@ -248,28 +241,13 @@ window.goToRegister = goToRegister;
 
 // Auto-login
 onAuthStateChanged(auth, user => {
-    if(user){
-        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        showDashboard(firstName, lastName, user.email);
+    if (user) {
+        window.location.href = "/records/foia/dashboard/";
     }
 });
 
-// Logout
-function logout() {
-    signOut(auth).then(() => {
-        document.getElementById("dashboardSection").classList.add("hidden");
-        document.getElementById("loginSection").classList.remove("hidden");
-    });
-}
 window.logout = logout;
 
-// Show dashboard
-function showDashboard(firstName, lastName, email) {
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeMessage").innerText =
-        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
-}
 </script>
 
 </body>

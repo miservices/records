@@ -175,13 +175,6 @@
         </form>
         <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
     </div>
-
-    <!-- Dashboard -->
-    <div id="dashboardSection" class="card hidden dashboard">
-        <h2>Welcome to the FOIA Portal</h2>
-        <p id="welcomeMessage"></p>
-        <button class="btn btn-primary" onclick="logout()">Log Out</button>
-    </div>
 </main>
 
 <footer>
@@ -231,8 +224,7 @@ document.getElementById("registerForm").addEventListener("submit", function(e){
     .then((userCredential) => {
         const user = userCredential.user;
         updateProfile(user, { displayName: firstName + " " + lastName });
-        loadDashboard(firstName, lastName, email);
-    })
+window.location.href = "/records/foia/dashboard/";    })
     .catch((error) => alert(error.message));
 });
 
@@ -246,33 +238,20 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
     .then((userCredential) => {
         const user = userCredential.user;
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, email);
+window.location.href = "/records/foia/dashboard/";
     })
     .catch((error) => alert(error.message));
 });
 
 // Auto-login / keep user logged in
-onAuthStateChanged(auth, (user) => {
-    if(user){
-        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, user.email);
+onAuthStateChanged(auth, user => {
+    if (user) {
+        window.location.href = "/records/foia/dashboard/";
     }
 });
 
-// Logout
-function logout(){
-    signOut(auth).then(() => location.reload());
-}
 window.logout = logout; // make it accessible to your button
 
-// Dashboard
-function loadDashboard(firstName, lastName, email){
-    document.getElementById("registerSection").classList.add("hidden");
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeMessage").innerText =
-        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
-}
 </script>
 
 
