@@ -263,13 +263,6 @@ function logout() {
 }
 window.logout = logout;
 
-// Show dashboard
-function showDashboard(firstName, lastName, email) {
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeMessage").innerText =
-        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
-}
 </script>
 
 </body>

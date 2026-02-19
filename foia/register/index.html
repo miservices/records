@@ -255,7 +255,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
 onAuthStateChanged(auth, (user) => {
     if(user){
         const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        loadDashboard(firstName, lastName, user.email);
+window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     }
 });
 
@@ -265,14 +265,7 @@ function logout(){
 }
 window.logout = logout; // make it accessible to your button
 
-// Dashboard
-function loadDashboard(firstName, lastName, email){
-    document.getElementById("registerSection").classList.add("hidden");
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeMessage").innerText =
-        "Logged in as " + firstName + " " + lastName + " (" + email + ")";
-}
+// Dashboar
 </script>
 
 
