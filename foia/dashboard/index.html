@@ -85,7 +85,6 @@ const auth = getAuth(app);
 
 onAuthStateChanged(auth, (user) => {
     if (!user) {
-        // Not logged in → redirect to register
         window.location.href = "https://miservices.github.io/records/foia/register/";
     } else {
         document.getElementById("welcomeMessage").innerText =

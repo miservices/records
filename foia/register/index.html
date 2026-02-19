@@ -176,12 +176,6 @@
         <button class="btn btn-secondary" onclick="showRegister()">Need an account? Register</button>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboardSection" class="card hidden dashboard">
-        <h2>Welcome to the FOIA Portal</h2>
-        <p id="welcomeMessage"></p>
-        <button class="btn btn-primary" onclick="logout()">Log Out</button>
-    </div>
 </main>
 
 <footer>
@@ -253,11 +247,11 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
 
 // Auto-login / keep user logged in
 onAuthStateChanged(auth, (user) => {
-    if(user){
-        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-window.location.href = "https://miservices.github.io/records/foia/dashboard/";
+    if (user) {
+        window.location.href = "https://miservices.github.io/records/foia/dashboard/";
     }
 });
+
 
 // Logout
 function logout(){
