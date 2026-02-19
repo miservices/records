@@ -2,107 +2,185 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Michigan FOIA Portal – Dashboard</title>
+<title>FOIA Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f6f8;
-    color: #1a1a1a;
+    background: #f4f6f8;
 }
 
 header {
-    background-color: #0e1c32;
+    background: #0e1c32;
     color: white;
-    padding: 30px 20px;
-    text-align: center;
+    padding: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
 }
 
 main {
-    max-width: 600px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px;
 }
 
 .card {
     background: white;
-    padding: 30px;
+    padding: 25px;
     border-radius: 6px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    margin-bottom: 30px;
 }
 
-.btn {
-    display: inline-block;
-    padding: 14px 22px;
+.actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    border: none;
-    font-size: 16px;
-    background-color: #0e1c32;
+}
+
+.primary {
+    background: #0e1c32;
     color: white;
 }
 
-.btn:hover {
-    background-color: #142a52;
+.secondary {
+    background: #e1e5eb;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.status {
+    font-weight: bold;
 }
 </style>
 </head>
+
 <body>
 
 <header>
-    <h1>Michigan FOIA Portal</h1>
-    <p>Dashboard</p>
+    <h1>FOIA Dashboard</h1>
+    <p id="userInfo"></p>
 </header>
 
 <main>
-    <div class="card">
-        <h2>Welcome</h2>
-        <p id="welcomeMessage"></p>
-        <button class="btn" onclick="logout()">Log Out</button>
+
+<div class="card">
+    <div class="actions">
+        <button class="primary" onclick="newRequest()">Submit FOIA Request</button>
+        <button class="secondary" onclick="logout()">Log Out</button>
     </div>
+</div>
+
+<div class="card">
+    <h2>Your FOIA Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Submitted</th>
+            </tr>
+        </thead>
+        <tbody id="requestsTable">
+            <tr><td colspan="4">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
 </main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxN56Z0ND8YleCANSSlIm7z",
+  apiKey: "AIzaSyAxN56Z0ND8YleCANSSlIm7z-KDaPXBz6I",
   authDomain: "michigan-foia-portal.firebaseapp.com",
   projectId: "michigan-foia-portal",
   storageBucket: "michigan-foia-portal.firebasestorage.app",
   messagingSenderId: "735821498282",
-  appId: "1:735821498282:web:60060d3fc8e0a5a9f70dd3",
-  measurementId: "G-ZRJ85D5X5C"
+  appId: "1:735821498282:web:60060d3fc8e0a5a9f70dd3"
 };
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        document.getElementById("welcomeMessage").innerText =
-            "Logged in as " + user.displayName + " (" + user.email + ")";
-    } else {
-        // Delay redirect slightly to avoid race condition
-        setTimeout(() => {
-            if (!auth.currentUser) {
-                window.location.href = "https://miservices.github.io/records/foia/register/";
-            }
-        }, 500);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Protect page
+onAuthStateChanged(auth, async user => {
+    if (!user) {
+        window.location.href = "/records/foia/login/";
+        return;
     }
+
+    document.getElementById("userInfo").innerText =
+        user.displayName + " (" + user.email + ")";
+
+    loadRequests(user.uid);
 });
 
+async function loadRequests(uid) {
+    const q = query(
+        collection(db, "foiaRequests"),
+        where("userId", "==", uid)
+    );
 
+    const snapshot = await getDocs(q);
+    const table = document.getElementById("requestsTable");
+    table.innerHTML = "";
 
-function logout() {
-    signOut(auth).then(() => {
-        window.location.href = "https://miservices.github.io/records/foia/register/";
+    if (snapshot.empty) {
+        table.innerHTML = "<tr><td colspan='4'>No FOIA requests submitted.</td></tr>";
+        return;
+    }
+
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        const row = `
+            <tr>
+                <td>${doc.id}</td>
+                <td>${data.subject}</td>
+                <td class="status">${data.status}</td>
+                <td>${new Date(data.submittedAt.seconds * 1000).toLocaleDateString()}</td>
+            </tr>`;
+        table.innerHTML += row;
     });
 }
 
-window.logout = logout;
+// Navigation
+window.newRequest = () => {
+    window.location.href = "/records/foia/request/new.html";
+};
+
+window.logout = () => {
+    signOut(auth).then(() => {
+        window.location.href = "/records/foia/login/";
+    });
+};
 </script>
 
 </body>
