@@ -202,9 +202,24 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const [firstName, lastName] = user.displayName ? user.displayName.split(" ") : ["", ""];
-        window.location.href = "/records/foia/dashboard/";
+const user = userCredential.user;
+
+if (!user.displayName) {
+    alert("Account error: missing display name.");
+    return;
+}
+
+const nameParts = user.displayName.trim().split(" ");
+const firstName = nameParts[0] || "";
+const lastName = nameParts[nameParts.length - 1] || "";
+
+// Store for dashboard filtering
+localStorage.setItem("firstName", firstName);
+localStorage.setItem("lastName", lastName);
+localStorage.setItem("email", user.email);
+
+// Redirect
+window.location.href = "/records/foia/dashboard/";
     } catch(error) {
         handleLoginError(error);
     }
@@ -242,7 +257,10 @@ window.goToRegister = goToRegister;
 // Auto-login
 onAuthStateChanged(auth, user => {
     if (user) {
-        window.location.href = "/records/foia/dashboard/";
+        // Only redirect if this is NOT the login page redirect loop
+        if (window.location.pathname.includes("/login")) {
+            window.location.href = "/records/foia/dashboard/";
+        }
     }
 });
 
