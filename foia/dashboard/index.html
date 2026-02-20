@@ -162,8 +162,15 @@ tr:hover {
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpPNwgf7vqVsCaG02stM4kRrOsKOAsK_RZXjUnGieqrKJXQzuZvlpC1n1Z7U0kUE36EC3aLnWv677d/pub?output=csv";
 
 let allRequests = [];
+let memberLastName = localStorage.getItem("lastName");
 
 document.addEventListener("DOMContentLoaded", async () => {
+    if (!memberLastName) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "/records/foia/login/";
+        return;
+    }
+
     await loadRequests();
     checkHash();
 });
@@ -179,7 +186,17 @@ async function loadRequests() {
 
     rows.shift(); // remove header
 
-    allRequests = rows.map(row => ({
+    // Filter by last name (Column D)
+    const filtered = rows.filter(row => 
+        row[3] && row[3].toLowerCase() === memberLastName.toLowerCase()
+    );
+
+    if (filtered.length === 0) {
+        table.innerHTML = "<tr><td colspan='5'>No requests found for your account.</td></tr>";
+        return;
+    }
+
+    allRequests = filtered.map(row => ({
         id: row[0],
         status: row[1],
         firstName: row[2],
@@ -263,10 +280,6 @@ function showDetail(req) {
     `;
 }
 
-function goBack() {
-    window.location.hash = "";
-}
-
 function parseCSV(text) {
     const rows = [];
     const lines = text.split("\n");
@@ -284,6 +297,7 @@ function newRequest() {
 }
 
 function logout() {
+    localStorage.removeItem("lastName");
     window.location.href = "/records/foia/login/";
 }
 </script>
